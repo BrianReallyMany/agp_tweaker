@@ -29,6 +29,12 @@ class TweaksList:
             for line in reader:
                 self.tweaks.append(line)
 
+    def get_tweak_parameters(self, sctg):
+        for line in self.tweaks:
+            if line[0] == sctg:
+                return line
+        return []
+
 class AgpBuffer:
 
 
