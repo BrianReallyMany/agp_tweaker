@@ -42,9 +42,11 @@ class AgpBuffer:
             sctg = self.second_line[5]
             tweak = self.tweaks_list.get_tweak_parameters(sctg)
             if len(tweak) != 0:
-                print("got to tweak")
+                if tweak[1] == "beginning":
+                    self.tweak_begin(int(tweak[2]))
+                else:
+                    self.tweak_end(int(tweak[2]))
             else:
-                print("no tweaks here")
                 return []
 
     def tweak_end(self, n):

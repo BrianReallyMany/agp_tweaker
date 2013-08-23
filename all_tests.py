@@ -47,13 +47,12 @@ class TestAgpBuffer(unittest.TestCase):
         sctg2 = ["sctg_0001_0003", "beginning", "5"]
         tl.tweaks = [sctg1, sctg2]
         buff = AgpBuffer(tl)
-        print(buff.tweaks_list.tweaks)
         sctg =  """scaffold00001    1   4968    1   W   sctg_0001_0001  1   4968    +""".split()
         frag = """scaffold00001 4969    6317    2   N   1349    fragment    yes""".split()
         buff.update(sctg)
         buff.update(frag)
         buff.tweak_away()
-        #self.assertEqual(4965, buff.second_line[2])
+        self.assertEqual("4965", buff.second_line[2])
 
     def test_tweak_end(self):
         buff = AgpBuffer([])
