@@ -2,21 +2,6 @@
 
 import csv
 
-class AgpTweaker:
-
-
-    def __init__(self):
-        self.three_line_buffer = []
-        self.tweaks_list = TweaksList()
-
-
-    def sctg_needs_tweaking(self, sctg):
-        for line in self.sctgs_to_tweak:
-            if line[0] == sctg:
-                return True
-        return False
-
-
 class TweaksList:
 
 

@@ -1,17 +1,8 @@
 #!/urs/bin/env python
 
 import unittest
-from agp_tweaker import AgpTweaker, AgpBuffer, TweaksList
+from agp_tweaker import AgpBuffer, TweaksList
 
-"""
-class TestAgpTweaker(unittest.TestCase):
-
-
-    def test_read_inputs(self):
-        tweaker = AgpTweaker()
-        tweaker.read_inputs("test_files/test_input")
-        self.assertEqual(2, len(tweaker.sctgs_to_tweak))
-"""
 
 class TestTweaksList(unittest.TestCase):
 
