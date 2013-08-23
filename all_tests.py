@@ -75,6 +75,9 @@ class TestAgpBuffer(unittest.TestCase):
         buff.tweak_begin(7)
         self.assertEqual("6324", buff.first_line[2])
 
+
+        
+
         
 
 

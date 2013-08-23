@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import csv
+import sys
 
 class TweaksList:
 
@@ -38,7 +39,9 @@ class AgpBuffer:
         self.third_line = newline
 
     def tweak_away(self):
-        if self.second_line[4] == "W":
+        if len(self.second_line) == 0:
+            return []
+        elif self.second_line[4] == "W":
             sctg = self.second_line[5]
             tweak = self.tweaks_list.get_tweak_parameters(sctg)
             if len(tweak) != 0:
@@ -46,8 +49,8 @@ class AgpBuffer:
                     self.tweak_begin(int(tweak[2]))
                 else:
                     self.tweak_end(int(tweak[2]))
-            else:
-                return []
+        else:
+           return []
 
     def tweak_end(self, n):
         old_sctg_end = int(self.second_line[2])
@@ -66,28 +69,30 @@ class AgpBuffer:
         self.second_line[1] = new_sctg_begin
         
         
+############################
+if __name__ == '__main__':
+    # Create TweaksList, AgpBuffer
+    tl = TweaksList()
+    tl.read_inputs(sys.argv[1])
+    buff = AgpBuffer(tl)
 
-## main should be something like:
-## tweek = AgpTweaker()
-## tweek.read_inputs(args[0])
-## reader = AgpReader()
-## (maybe the constructor should create reader and buffer?)
-## buff = AgpBuffer()
-## read first 2 lines into buffer (buff.update(firstline), etc.)
-## run buff.check_middle_line, which updates lines 1-3 if necessary
-## writer = AgpWriter(args[1]) -- or else stdout?
-## while reader.hasnext() do
-##   writer.write(buff.ready_to_write)
-##   buff.update(reader.getnext())
-## then when reader has no next,
-## buffer should contain last 3 lines,
-## so buff.process_last_two or s.th.?
-##
-## so ...
-## TODO AgpBuffer methods for actually updating shit
-##      (check if second_line is sctg, if so check if
-##      on list, if so do stuff ...)
-## TODO AgpReader, AgpWriter
-## TODO AgpBuffer method for processing last of the data, maybe
-##      can be real slick about this...
+    # Open .agp file and read first two lines into buffer
+    with open(sys.argv[2]) as agp_file:
+        reader = csv.reader(agp_file, delimiter='\t', quotechar='|')
+        writer = csv.writer(sys.stdout, delimiter='\t', quoting=csv.QUOTE_NONE)
+        for row in reader:
+            buff.update(row)
+            buff.tweak_away()
+            writer.writerow(buff.ready_to_write)    
+        
+        # Reached end of .agp, but still have rows in buffer.
+        buff.update([])
+        buff.tweak_away()
+        writer.writerow(buff.ready_to_write)
+        buff.update([])
+        buff.tweak_away()
+        writer.writerow(buff.ready_to_write)
+        writer.writerow(buff.first_line)
+
 ## TODO what if need to tweak same sctg at begin *and* end???
+## TODO adjust lenghts too!
