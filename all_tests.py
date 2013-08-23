@@ -42,23 +42,40 @@ class TestAgpBuffer(unittest.TestCase):
         self.assertEqual("foo", buff.third_line[0])
 
     def test_tweak_away(self):
+        tl = TweaksList()
         sctg1 = ["sctg_0001_0001", "end", "3"]
         sctg2 = ["sctg_0001_0003", "beginning", "5"]
-        sctgs = [sctg1, sctg2]
-        buff = AgpBuffer(sctgs)
+        tl.tweaks = [sctg1, sctg2]
+        buff = AgpBuffer(tl)
+        print(buff.tweaks_list.tweaks)
         sctg =  """scaffold00001    1   4968    1   W   sctg_0001_0001  1   4968    +""".split()
         frag = """scaffold00001 4969    6317    2   N   1349    fragment    yes""".split()
         buff.update(sctg)
         buff.update(frag)
         buff.tweak_away()
         #self.assertEqual(4965, buff.second_line[2])
-        # goes like this: read frag/sctg/frag into buffer,
-        # call buff.tweak_away()
-        # buff will call "needs_tweaking" on second_line
-        # need to pass sctgs_to_tweak to buffer on create? i guess
-        # anyway buffer will check sctgs to tweak and should
-        # get a yes, adjust indices, pau.
-        # once this works the program is basically wrote.
+
+    def test_tweak_end(self):
+        buff = AgpBuffer([])
+        sctg =  """scaffold00001    1   4968    1   W   sctg_0001_0001  1   4968    +""".split()
+        frag = """scaffold00001 4969    6317    2   N   1349    fragment    yes""".split()
+        buff.update(sctg)
+        buff.update(frag)
+        buff.tweak_end(5)
+        self.assertEqual("4963", buff.second_line[2])
+        self.assertEqual("4964", buff.third_line[1])
+
+    def test_tweak_begin(self):
+        buff = AgpBuffer([])
+        frag1 = """scaffold00001    4969    6317    2   N   1349    fragment    yes""".split()
+        sctg = """scaffold00001 6318    13067   3   W   sctg_0001_0002  1   6750    +""".split()
+        frag2 = """scaffold00001    13068   14934   4   N   1867    fragment    yes""".split()
+        buff.update(frag1)
+        buff.update(sctg)
+        buff.update(frag2)
+        buff.tweak_begin(7)
+        self.assertEqual("6324", buff.first_line[2])
+
         
 
 
