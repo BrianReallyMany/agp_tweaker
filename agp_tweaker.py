@@ -53,24 +53,52 @@ class AgpBuffer:
            return []
 
     def tweak_end(self, n):
+        # Adjust column 3 of sctg
         old_sctg_end = int(self.second_line[2])
         new_sctg_end = str(old_sctg_end - n)
         self.second_line[2] = new_sctg_end
+        # Adjust column 8 of sctg
+        old_end = int(self.second_line[7])
+        new_end = str(old_end - n)
+        self.second_line[7] = new_end
+        # Adjust column 2 of fragment
         old_frag_begin = int(self.third_line[1])
         new_frag_begin = str(old_frag_begin - n)
         self.third_line[1] = new_frag_begin
+        # Adjust column 6 of fragment
+        old_length = int(self.third_line[5])
+        new_length = str(old_length + n)
+        self.third_line[5] = new_length
 
     def tweak_begin(self, n):
+        # Adjust column 3 of frag
         old_frag_end = int(self.first_line[2])
         new_frag_end = str(old_frag_end + n)
         self.first_line[2] = new_frag_end
+        # Adjust column 6 of frag
+        old_length = int(self.first_line[5])
+        new_length = str(old_length + n)
+        self.first_line[5] = new_length
+        # Adjust column 2 of sctg
         old_sctg_begin = int(self.second_line[1])
         new_sctg_begin = str(old_sctg_begin + n)
         self.second_line[1] = new_sctg_begin
+        # Adjust column 8 of sctg
+        old_end = int(self.second_line[7])
+        new_end = str(old_end - n)
+        self.second_line[7] = new_end
         
         
 ############################
 if __name__ == '__main__':
+    
+    # Check inputs ...
+    if len(sys.argv) != 3:
+        print("usage: python agp_tweaker.py <stuff-to-tweak file> <.agp file>")
+        print("\nstuff-to-tweak file is tab-delimited in the format:")
+        print("component_id     end/beginning   number of bases to delete")
+        sys.exit()
+
     # Create TweaksList, AgpBuffer
     tl = TweaksList()
     tl.read_inputs(sys.argv[1])
@@ -94,5 +122,3 @@ if __name__ == '__main__':
         writer.writerow(buff.ready_to_write)
         writer.writerow(buff.first_line)
 
-## TODO what if need to tweak same sctg at begin *and* end???
-## TODO adjust lenghts too!
