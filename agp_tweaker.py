@@ -123,3 +123,7 @@ if __name__ == '__main__':
         writer.writerow(buff.first_line)
 
 ## TODO need functionality to write a new fragment when trimming beginning of a sctg that is immediately preceded by another sctg (no fragment before) or trimming the end of one followed by another sctg (no fragment after)
+## TODO more explicitly:
+## TODO make ready_to_write a list of lines; pass tests
+## TODO add check in tweak_begin, if first_line.is_sctg() then add first_line to ready_to_write, then first_line = create_frag(second_line, n), then tweak second_line
+## TODO similarly, add check in tweak_end, if third_line.is_sctg() then add first_line to ready_to_write, tweak second_line, first_line = second_line, second_line = create_frag(first_line, n).
