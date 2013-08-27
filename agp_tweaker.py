@@ -33,14 +33,15 @@ class AgpBuffer:
         self.ready_to_write = []
 
     def update(self, newline):
-        self.ready_to_write = self.first_line
+        self.ready_to_write[:] = []
+        self.ready_to_write.append(self.first_line)
         self.first_line = self.second_line
         self.second_line = self.third_line
         self.third_line = newline
 
     def tweak_away(self):
         if len(self.second_line) == 0:
-            return []
+            return 
         elif self.second_line[4] == "W":
             sctg = self.second_line[5]
             tweak = self.tweaks_list.get_tweak_parameters(sctg)
@@ -50,7 +51,7 @@ class AgpBuffer:
                 else:
                     self.tweak_end(int(tweak[2]))
         else:
-           return []
+           return 
 
     def tweak_end(self, n):
         # Adjust column 3 of sctg
@@ -111,15 +112,19 @@ if __name__ == '__main__':
         for row in reader:
             buff.update(row)
             buff.tweak_away()
-            writer.writerow(buff.ready_to_write)    
+            for line in buff.ready_to_write:
+                if len(buff.ready_to_write[0]) > 0:
+                    writer.writerow(line)    
         
         # Reached end of .agp, but still have rows in buffer.
         buff.update([])
         buff.tweak_away()
-        writer.writerow(buff.ready_to_write)
+        for line in buff.ready_to_write:
+            writer.writerow(line)
         buff.update([])
         buff.tweak_away()
-        writer.writerow(buff.ready_to_write)
+        for line in buff.ready_to_write:
+            writer.writerow(line)
         writer.writerow(buff.first_line)
 
 ## TODO need functionality to write a new fragment when trimming beginning of a sctg that is immediately preceded by another sctg (no fragment before) or trimming the end of one followed by another sctg (no fragment after)
