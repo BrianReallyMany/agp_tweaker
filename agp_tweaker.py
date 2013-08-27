@@ -122,3 +122,4 @@ if __name__ == '__main__':
         writer.writerow(buff.ready_to_write)
         writer.writerow(buff.first_line)
 
+## TODO need functionality to write a new fragment when trimming beginning of a sctg that is immediately preceded by another sctg (no fragment before) or trimming the end of one followed by another sctg (no fragment after)
