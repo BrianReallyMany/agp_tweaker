@@ -63,12 +63,7 @@ class AgpBuffer:
         new_end = str(old_end - n)
         self.second_line[7] = new_end
         
-        if self.third_line[4] != 'N':
-            # make a new fragment
-            self.ready_to_write.append(self.first_line)
-            self.first_line = self.second_line
-            self.second_line = self.make_new_fragment_after(self.first_line, n)
-        else:
+        if self.third_line[4] == 'N':
             # Adjust column 2 of fragment
             old_frag_begin = int(self.third_line[1])
             new_frag_begin = str(old_frag_begin - n)
@@ -88,11 +83,7 @@ class AgpBuffer:
         new_end = str(old_end - n)
         self.second_line[7] = new_end
 
-        if self.first_line[4] != 'N':
-            # make new fragment
-            self.ready_to_write.append(self.first_line)
-            self.first_line = self.make_new_fragment_before(self.second_line, n)
-        else:
+        if self.first_line[4] == 'N':
             # Adjust column 3 of frag
             old_frag_end = int(self.first_line[2])
             new_frag_end = str(old_frag_end + n)
