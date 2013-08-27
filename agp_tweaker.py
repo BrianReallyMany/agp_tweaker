@@ -93,23 +93,6 @@ class AgpBuffer:
             new_length = str(old_length + n)
             self.first_line[5] = new_length
 
-    def make_new_fragment_after(self, line, n):
-        previous_sctg_end = int(line[2])
-        start = str(previous_sctg_end + 1)
-        end = str(previous_sctg_end + n)
-        frag_id = line[3] + ".5"
-        frag = [line[0], start, end, frag_id, 'N', str(n), "fragment", "yes"]
-        return frag
-
-    def make_new_fragment_before(self, line, n):
-        next_sctg_begin = int(line[1])
-        start = str(next_sctg_begin - n)
-        end = str(next_sctg_begin - 1)
-        frag_id = str(int(line[3]) - 0.5)
-        frag = [line[0], start, end, frag_id, 'N', str(n), "fragment", "yes"]
-        return frag
-        
-        
         
 ############################
 if __name__ == '__main__':
@@ -149,8 +132,3 @@ if __name__ == '__main__':
             writer.writerow(line)
         writer.writerow(buff.first_line)
 
-## TODO need functionality to write a new fragment when trimming beginning of a sctg that is immediately preceded by another sctg (no fragment before) or trimming the end of one followed by another sctg (no fragment after)
-## TODO more explicitly:
-## TODO make ready_to_write a list of lines; pass tests
-## TODO add check in tweak_begin, if first_line.is_sctg() then add first_line to ready_to_write, then first_line = create_frag(second_line, n), then tweak second_line
-## TODO similarly, add check in tweak_end, if third_line.is_sctg() then add first_line to ready_to_write, tweak second_line, first_line = second_line, second_line = create_frag(first_line, n).
