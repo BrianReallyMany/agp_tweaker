@@ -62,24 +62,23 @@ class AgpBuffer:
         old_end = int(self.second_line[7])
         new_end = str(old_end - n)
         self.second_line[7] = new_end
-        # Adjust column 2 of fragment
-        old_frag_begin = int(self.third_line[1])
-        new_frag_begin = str(old_frag_begin - n)
-        self.third_line[1] = new_frag_begin
-        # Adjust column 6 of fragment
-        old_length = int(self.third_line[5])
-        new_length = str(old_length + n)
-        self.third_line[5] = new_length
+        
+        if self.third_line[4] != 'N':
+            # make a new fragment
+            self.ready_to_write.append(self.first_line)
+            self.first_line = self.second_line
+            self.second_line = self.make_new_fragment_after(self.first_line, n)
+        else:
+            # Adjust column 2 of fragment
+            old_frag_begin = int(self.third_line[1])
+            new_frag_begin = str(old_frag_begin - n)
+            self.third_line[1] = new_frag_begin
+            # Adjust column 6 of fragment
+            old_length = int(self.third_line[5])
+            new_length = str(old_length + n)
+            self.third_line[5] = new_length
 
     def tweak_begin(self, n):
-        # Adjust column 3 of frag
-        old_frag_end = int(self.first_line[2])
-        new_frag_end = str(old_frag_end + n)
-        self.first_line[2] = new_frag_end
-        # Adjust column 6 of frag
-        old_length = int(self.first_line[5])
-        new_length = str(old_length + n)
-        self.first_line[5] = new_length
         # Adjust column 2 of sctg
         old_sctg_begin = int(self.second_line[1])
         new_sctg_begin = str(old_sctg_begin + n)
@@ -88,6 +87,37 @@ class AgpBuffer:
         old_end = int(self.second_line[7])
         new_end = str(old_end - n)
         self.second_line[7] = new_end
+
+        if self.first_line[4] != 'N':
+            # make new fragment
+            self.ready_to_write.append(self.first_line)
+            self.first_line = self.make_new_fragment_before(self.second_line, n)
+        else:
+            # Adjust column 3 of frag
+            old_frag_end = int(self.first_line[2])
+            new_frag_end = str(old_frag_end + n)
+            self.first_line[2] = new_frag_end
+            # Adjust column 6 of frag
+            old_length = int(self.first_line[5])
+            new_length = str(old_length + n)
+            self.first_line[5] = new_length
+
+    def make_new_fragment_after(self, line, n):
+        previous_sctg_end = int(line[2])
+        start = str(previous_sctg_end + 1)
+        end = str(previous_sctg_end + n)
+        frag_id = line[3] + ".5"
+        frag = [line[0], start, end, frag_id, 'N', str(n), "fragment", "yes"]
+        return frag
+
+    def make_new_fragment_before(self, line, n):
+        next_sctg_begin = int(line[1])
+        start = str(next_sctg_begin - n)
+        end = str(next_sctg_begin - 1)
+        frag_id = str(int(line[3]) - 0.5)
+        frag = [line[0], start, end, frag_id, 'N', str(n), "fragment", "yes"]
+        return frag
+        
         
         
 ############################
@@ -114,6 +144,7 @@ if __name__ == '__main__':
             buff.tweak_away()
             for line in buff.ready_to_write:
                 if len(buff.ready_to_write[0]) > 0:
+                    # (Avoids writing blank lines at beginning)
                     writer.writerow(line)    
         
         # Reached end of .agp, but still have rows in buffer.
